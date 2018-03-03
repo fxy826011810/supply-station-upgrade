@@ -1,11 +1,12 @@
-#include "stm32f10x.h"
-#include "pid.h"
+#include "main.h"
 
 
-PID_TypeDef CM1PositionPID = CM1PositionPID_default;
-PID_TypeDef CM1SpeedPID = CM1SpeedPID_default;
-PID_TypeDef CM2PositionPID = CM2PositionPID_default;
-PID_TypeDef CM2SpeedPID = CM2SpeedPID_default;
+PID_TypeDef _12v_RM6025_PositionPID = CMPositionPID_default;
+PID_TypeDef _12v_RM6025_SpeedPID = CMSpeedPID_default;
+
+PID_TypeDef _24v_RM6025_PositionPID = CMPositionPID_default;
+PID_TypeDef _24v_RM6025_SpeedPID = CMSpeedPID_default;
+
 
 void abs_limit(float *a, float ABS_MAX)
 {
@@ -20,37 +21,32 @@ void  Pid_Reset(PID_TypeDef* pid)
 	pid->Pout = 0;
 	pid->Iout = 0;
 	pid->Dout = 0;
-	pid->output[NOW] = 0;
-	pid->output[LAST] = 0;
-	pid->output[LLAST] = 0;
+	pid->output = 0;
 }
 
 void Bsp_Pid_Init(void)
 	{
-	CM1PositionPID.reset(&CM1PositionPID);
-	CM2PositionPID.reset(&CM2PositionPID);
-	CM1SpeedPID.reset(&CM1SpeedPID);
-	CM2SpeedPID.reset(&CM2SpeedPID);
+	_12v_RM6025_PositionPID.reset(&_12v_RM6025_PositionPID);
+	_12v_RM6025_SpeedPID.reset(&_12v_RM6025_SpeedPID);
+	_24v_RM6025_PositionPID.reset(&_24v_RM6025_PositionPID);
+	_24v_RM6025_SpeedPID.reset(&_24v_RM6025_SpeedPID);
 
 	}
+	
+enum
+{
+	NOW = 0,
+	LAST = 1,
+};
 
 void Pid_Test(PID_TypeDef* pid)
 {
-	
-		pid->error[NOW] = pid->setdata - pid->realdata[NOW];
+		pid->error[NOW] = pid->setdata - pid->realdata;
 		pid->Pout = pid->Kp*pid->error[NOW];
 		pid->Iout += pid->Ki*pid->error[NOW];
 		pid->Dout = pid->Kd*(pid->error[NOW] - pid->error[LAST]);
-
-		abs_limit(&(pid->Iout), pid->setimax);
-
-		pid->output[NOW] = pid->Pout + pid->Iout + pid->Dout;
-		abs_limit(&(pid->output[NOW]), pid->setmax);
-                
-    pid->output[LLAST] = pid->output[LAST];
-		pid->output[LAST] = pid->output[NOW];
-		pid->error[LLAST] = pid->error[LAST];
+		abs_limit(&(pid->Iout),pid->setimax);
+		pid->output = pid->Pout + pid->Iout + pid->Dout;
+		abs_limit(&(pid->output),pid->setomax);
 		pid->error[LAST] = pid->error[NOW];
-		pid->realdata[LLAST] = pid->realdata[LAST];
-		pid->realdata[LAST] = pid->realdata[NOW];
 }

@@ -1,18 +1,6 @@
 #ifndef __PID_H
 #define __PID_H
-#include "can.h"
 
-
-#define __PID_EXT extern
-
-enum
-{
-	NOW = 0,
-	LAST = 1,
-	LLAST = 2,
-  OUTPUT = 3,
-
-};
 
 typedef struct PID_TypeDef
 {	float Kp;//比例系数
@@ -20,20 +8,20 @@ typedef struct PID_TypeDef
 	float Kd;//微分系数
         
 	float setdata;//设定值
-	float setimax;
-  float setmax;
-	float setmin;
+	float setimax;//设定积分最大值
+  float setomax;//输出最大值
 	 
 	float Pout;//比例输出
 	float Iout;//积分输出
 	float Dout;//微分输出
-	float error[3];//偏差值
-	float realdata[3];//实际速度值
-	float output[3];//位置PID输出
-	void(*test)(struct PID_TypeDef *pid);
+	float error[2];//偏差值
+	float realdata;//实际速度值
+	float output;//PID输出
+	void(*calc)(struct PID_TypeDef *pid);
 	void(*reset)(struct PID_TypeDef *pid);
 
 }PID_TypeDef;
+
 
 void Bsp_Pid_Init(void);
 void Pid_Test(PID_TypeDef* pid);
@@ -41,85 +29,47 @@ void  Pid_Reset(PID_TypeDef* pid);
 
 
 
-#define CM1PositionPID_default \
+#define CMPositionPID_default \
 {\
-2.0f,\
+0.0f,\
 0.0f,\
 0.0f,\
 0,\
 2000,\
-4000,\
+4900,\
 0,\
 0,\
 0,\
+{0,0},\
 0,\
-{0,0,0},\
-{0,0,0},\
-{0,0,0},\
+0,\
 &Pid_Test,\
 &Pid_Reset,\
 }
 
-#define CM1SpeedPID_default \
+#define CMSpeedPID_default \
 {\
-2.0f,\
+0.0f,\
 0.0f,\
 0.0f,\
 0,\
 2000,\
-4000,\
+4900,\
 0,\
 0,\
 0,\
-0,\
-{0,0,0},\
-{0,0,0},\
-{0,0,0},\
-&Pid_Test,\
-&Pid_Reset,\
-}
-#define CM2PositionPID_default \
-{\
-2.0f,\
-0.0f,\
-0.0f,\
-0,\
-2000,\
-4000,\
+{0,0},\
 0,\
 0,\
-0,\
-0,\
-{0,0,0},\
-{0,0,0},\
-{0,0,0},\
-&Pid_Test,\
-&Pid_Reset,\
-}
-
-#define CM2SpeedPID_default \
-{\
-2.0f,\
-0.0f,\
-0.0f,\
-0,\
-2000,\
-4000,\
-0,\
-0,\
-0,\
-0,\
-{0,0,0},\
-{0,0,0},\
-{0,0,0},\
 &Pid_Test,\
 &Pid_Reset,\
 }
 
 
-__PID_EXT PID_TypeDef CM1PositionPID ;
-__PID_EXT PID_TypeDef CM1SpeedPID ;
-__PID_EXT PID_TypeDef CM2PositionPID ;
-__PID_EXT PID_TypeDef CM2SpeedPID ;
+
+extern PID_TypeDef _12v_RM6025_PositionPID ;
+extern PID_TypeDef _12v_RM6025_SpeedPID ;
+extern PID_TypeDef _24v_RM6025_PositionPID ;
+extern PID_TypeDef _24v_RM6025_SpeedPID ;
 
 #endif

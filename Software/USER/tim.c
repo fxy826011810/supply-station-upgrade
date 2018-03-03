@@ -22,6 +22,6 @@ void TIM6_IRQHandler(void)//¿ØÖÆÈÎÎñ
 				{
 						TIM_ClearITPendingBit(TIM6, TIM_IT_Update);
 						TIM_ClearFlag(TIM6, TIM_FLAG_Update);
-						Control_Loop();
+						ControlLoop();
 				}
 }

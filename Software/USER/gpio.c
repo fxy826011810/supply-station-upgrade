@@ -117,6 +117,5 @@ void Bsp_GPIO_Init(void)
 	gpio_init(&gpio_key3);
 	gpio_init(&gpio_key4);
 
-
 	GPIO_PinRemapConfig(GPIO_Remap1_CAN1,ENABLE);
 }

@@ -419,6 +419,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\pid.c</FilePath>
             </File>
+            <File>
+              <FileName>ramp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\ramp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

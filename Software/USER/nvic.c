@@ -1,5 +1,4 @@
-#include "nvic.h"
-#include "stm32f10x.h"
+#include "main.h"
 void Bsp_NVIC_Init(void)
 {
 	NVIC_InitTypeDef											nvic;
@@ -14,17 +13,11 @@ void Bsp_NVIC_Init(void)
 	NVIC_Init(&nvic);
 
 	//tim6
-	nvic.NVIC_IRQChannel						= TIM6_IRQn;
+	nvic.NVIC_IRQChannel						= TIM2_IRQn;
 	nvic.NVIC_IRQChannelCmd						= ENABLE;
 	nvic.NVIC_IRQChannelPreemptionPriority		= 2;
 	nvic.NVIC_IRQChannelSubPriority				= 2;
 	NVIC_Init(&nvic);
-	//usart1
-	nvic.NVIC_IRQChannel = USART3_IRQn;
-	nvic.NVIC_IRQChannelPreemptionPriority=1 ;//抢占优先级3
-	nvic.NVIC_IRQChannelSubPriority = 0;		//子优先级3
-	nvic.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
-	NVIC_Init(&nvic);	//根据指定的参数初始化VIC寄存器
 
 
 
