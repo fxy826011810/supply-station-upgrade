@@ -1,6 +1,8 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
+
 #include "stm32f10x.h"
+#include "conf.h"
 #include "gpio.h"//
 #include "nvic.h"//
 #include "can.h"//

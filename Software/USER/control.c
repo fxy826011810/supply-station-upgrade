@@ -141,7 +141,7 @@ void Supply_ControlLoop(supply_t *supply)//补给站的状态控制
 	{
 		{
 			//////////////////////////////////////////////////////////////////////////////////
-			supply->supplySetAngle=0.0f;
+			supply->supplySetAngle=(float)zeroAngle;
 			supply->encoder->ecd_bias=(int)(supply->supplyOffset+supply->supplySetAngle);
 			//////////////////////////////////////////////////////////////////////////////////
 		}
@@ -160,11 +160,11 @@ void Supply_ControlLoop(supply_t *supply)//补给站的状态控制
 			//通过一个缓慢的减小使supply->supplySetAngle等于0x0
 			//supply->supplyOffset为初始值
 			//////////////////////////////////////////////////////////////////////////////////
-			smoothFilter(0.0f,&supply->supplySetAngle,0.01);
+			smoothFilter((float)zeroAngle,&supply->supplySetAngle,0.01);
 			supply->encoder->ecd_bias=(int)(supply->supplyOffset+supply->supplySetAngle);
 			//////////////////////////////////////////////////////////////////////////////////
 		}
-		if(supply->supplySetAngle<0xF)
+		if(supply->supplySetAngle<(float)Min_Error)
 		{
 			//转到顶时状态变为off结束一次加弹过程
 			supply->operateStatus=off;
@@ -176,7 +176,7 @@ void Supply_ControlLoop(supply_t *supply)//补给站的状态控制
 		{
 			//这两句有没有无所谓
 			//////////////////////////////////////////////////////////////////////////////////
-			supply->supplySetAngle=0x1000;
+			supply->supplySetAngle=(float)halfAngle;
 			supply->encoder->ecd_bias=(int)(supply->supplyOffset+supply->supplySetAngle);
 			//////////////////////////////////////////////////////////////////////////////////
 		}
@@ -196,12 +196,12 @@ void Supply_ControlLoop(supply_t *supply)//补给站的状态控制
 			//通过一个缓慢的增加使supply->supplySetAngle等于0x1000
 			//supply->supplyOffset为初始值
 			//////////////////////////////////////////////////////////////////////////////////
-			smoothFilter((float)0x1000,&supply->supplySetAngle,0.01);
+			smoothFilter((float)halfAngle,&supply->supplySetAngle,0.01);
 			supply->encoder->ecd_bias=(int)(supply->supplyOffset+supply->supplySetAngle);
 			//////////////////////////////////////////////////////////////////////////////////
 		}
 		
-		if(supply->supplySetAngle>0xFF0)
+		if(supply->supplySetAngle>(float)(halfAngle-Min_Error))
 		{
 			//转到底时状态变为wait
 			supply->operateStatus=wait;
@@ -258,16 +258,16 @@ void ControlLoop(void)//模式控制
 	if(System_mode==prepare)
 	{
 		
-		smoothFilter((float)0x1C00,&supply1.supplyOffset,0.005);
-		smoothFilter((float)0x1F4C,&supply2.supplyOffset,0.005);
+		smoothFilter((float)supply1Offset,&supply1.supplyOffset,0.005);
+		smoothFilter((float)supply2Offset,&supply2.supplyOffset,0.005);
 		
 		supply1.encoder->ecd_bias=(int)supply1.supplyOffset;
 		supply2.encoder->ecd_bias=(int)supply2.supplyOffset;
 		
-		if((int)supply1.supplyOffset>0x1BF1&&(int)supply1.supplyOffset>0x1F3C)
+		if((int)supply1.supplyOffset>(float)(supply1Offset-Min_Error)&&(int)supply1.supplyOffset>(float)(supply2Offset-Min_Error))
 		{
-			supply1.supplyOffset=(float)0x1C00;
-			supply2.supplyOffset=(float)0x1F4C;
+			supply1.supplyOffset=(float)supply1Offset;
+			supply2.supplyOffset=(float)supply2Offset;
 			
 			supply1.encoder->ecd_bias=(int)supply1.supplyOffset;
 			supply2.encoder->ecd_bias=(int)supply2.supplyOffset;

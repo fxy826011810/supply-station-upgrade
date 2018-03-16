@@ -424,6 +424,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\ramp.c</FilePath>
             </File>
+            <File>
+              <FileName>conf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\USER\conf.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
